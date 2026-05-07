@@ -4,14 +4,21 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float gravity = -9.81f;
+    [SerializeField] private float jumpHeight = 1.5f;
     [SerializeField] private Transform cameraTransform;
 
+    private CharacterController controller;
     private PlayerInput inputActions;
+
     private Vector2 moveInput;
+    private float verticalVelocity;
 
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
+
+        controller = GetComponent<CharacterController>();
         inputActions = new PlayerInput();
     }
 
@@ -20,17 +27,26 @@ public class PlayerMovement : MonoBehaviour
         inputActions.Enable();
         inputActions.Player.Move.performed += OnMove;
         inputActions.Player.Move.canceled += OnMove;
+        inputActions.Player.Jump.performed += OnJump;
     }
 
     private void OnDisable()
     {
         inputActions.Player.Move.performed -= OnMove;
         inputActions.Player.Move.canceled -= OnMove;
+        inputActions.Player.Jump.performed -= OnJump;
         inputActions.Disable();
     }
 
     private void Update()
     {
+        bool isGrounded = controller.isGrounded;
+
+        if (isGrounded && verticalVelocity < 0f)
+        {
+            verticalVelocity = -2f; // keeps grounded stable
+        }
+
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
 
@@ -42,11 +58,22 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = forward * moveInput.y + right * moveInput.x;
 
-        transform.position += move * ((moveSpeed * 10) * Time.deltaTime);
+        controller.Move(move * ((moveSpeed * 10) * Time.deltaTime));
+
+        verticalVelocity += gravity * Time.deltaTime;
+        controller.Move(Vector3.up * (verticalVelocity * Time.deltaTime));
     }
 
     private void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
+    }
+
+    private void OnJump(InputAction.CallbackContext context)
+    {
+        if (controller.isGrounded)
+        {
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
     }
 }
