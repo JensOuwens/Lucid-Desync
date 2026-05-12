@@ -22,16 +22,30 @@ public class GunHandler : MonoBehaviour
     [SerializeField] private float reloadTime;
     [SerializeField] private TMP_Text reloadText;
 
-    public IFireStrategy fireStrategy;
-    public IReloadStrategy reloadStrategy;
+    public IFireStrategy currentFireStrategy;
+    public IReloadStrategy currentReloadStrategy;
+    
+    public IFireStrategy projectileFireStrategy;
+    public IFireStrategy HitscanFireStrategy;
+    
+    public IReloadStrategy noReloadStrategy;
+    public IReloadStrategy revolverReloadStrategy;
     
     private float nextFireTime;
     private bool isReloading;
     
     private void Awake()
     {
-        fireStrategy = new HitscanFireStrategy(enemyLayerMask, Camera.main, gunDamage, gunAnimator);
-        reloadStrategy = new NoReloadStrategy();
+        HitscanFireStrategy = new HitscanFireStrategy(enemyLayerMask, Camera.main, gunDamage, gunAnimator);
+        projectileFireStrategy =
+            new ProjectileFireStategy(enemyLayerMask, Camera.main, gunDamage, gunAnimator, bulletPrefab);
+        
+        noReloadStrategy = new NoReloadStrategy();
+        revolverReloadStrategy = new RevolverReloadStrategy(reloadTime);
+
+        currentFireStrategy = HitscanFireStrategy;
+        currentReloadStrategy = noReloadStrategy;
+        UpdateAmmoUI();
     }
     
     private void Update()
@@ -51,18 +65,20 @@ public class GunHandler : MonoBehaviour
 
     private void Shoot()
     {
-        fireStrategy.Fire();
+        currentFireStrategy.Fire();
     }
 
     private void DeductAmmo()
     {
-        currentAmmo = reloadStrategy.DeductAmmo(currentAmmo);
+        currentAmmo = currentReloadStrategy.DeductAmmo(currentAmmo);
+        UpdateAmmoUI();
     }
     
     private void Reload()
     {
         isReloading = true;
-        currentAmmo = reloadStrategy.Reload(currentAmmo, maxAmmo);
+        currentAmmo = currentReloadStrategy.Reload(currentAmmo, maxAmmo);
+        UpdateAmmoUI();
         isReloading = false;
     }
 
