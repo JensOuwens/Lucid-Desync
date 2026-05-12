@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class GunHandler : MonoBehaviour
 {
@@ -15,10 +16,17 @@ public class GunHandler : MonoBehaviour
 
     [SerializeField] private Animator gunAnimator;
 
+    [SerializeField] private int maxAmmo;
+    private int currentAmmo;
+
+    [SerializeField] private float reloadTime;
+    [SerializeField] private TMP_Text reloadText;
+
     public IFireStrategy fireStrategy;
     public IReloadStrategy reloadStrategy;
     
     private float nextFireTime;
+    private bool isReloading;
     
     private void Awake()
     {
@@ -28,13 +36,14 @@ public class GunHandler : MonoBehaviour
     
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
+        if (Input.GetMouseButtonDown(0) && Time.time >= nextFireTime && currentAmmo > 0 && !isReloading)
         {
+            DeductAmmo();
             Shoot();
             nextFireTime = Time.time + timeBetweenShots;
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R) && !isReloading)
         {
             Reload();
         }
@@ -45,8 +54,20 @@ public class GunHandler : MonoBehaviour
         fireStrategy.Fire();
     }
 
+    private void DeductAmmo()
+    {
+        currentAmmo = reloadStrategy.DeductAmmo(currentAmmo);
+    }
+    
     private void Reload()
     {
-        reloadStrategy.Reload();
+        isReloading = true;
+        currentAmmo = reloadStrategy.Reload(currentAmmo, maxAmmo);
+        isReloading = false;
+    }
+
+    private void UpdateAmmoUI()
+    {
+        reloadText.text = currentAmmo + "/" + maxAmmo;
     }
 }
