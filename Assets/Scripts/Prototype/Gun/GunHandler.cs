@@ -45,6 +45,8 @@ public class GunHandler : MonoBehaviour
 
         currentFireStrategy = HitscanFireStrategy;
         currentReloadStrategy = noReloadStrategy;
+        
+        currentAmmo = maxAmmo;
         UpdateAmmoUI();
     }
     
@@ -84,6 +86,7 @@ public class GunHandler : MonoBehaviour
 
     private void UpdateAmmoUI()
     {
+        Debug.Log(currentAmmo);
         reloadText.text = currentAmmo + "/" + maxAmmo;
     }
 }

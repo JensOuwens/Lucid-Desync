@@ -19,6 +19,6 @@ public class RevolverReloadStrategy : IReloadStrategy
 
     public int DeductAmmo(int currentAmmo)
     {
-        return currentAmmo--;
+        return currentAmmo - 1;
     }
 }
