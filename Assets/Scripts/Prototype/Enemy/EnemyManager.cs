@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,6 +10,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private Transform player;
 
     [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private TMP_Text enemiesLeft;
 
     private List<ChaseEnemy> aliveEnemies = new();
 
@@ -38,6 +40,7 @@ public class EnemyManager : MonoBehaviour
 
             aliveEnemies.Add(enemy);
         }
+        enemiesLeftUpdateText();
     }
 
     private void HandleEnemyDeath(ChaseEnemy enemy)
@@ -46,11 +49,16 @@ public class EnemyManager : MonoBehaviour
 
         aliveEnemies.Remove(enemy);
 
-        Debug.Log($"Enemies left: {aliveEnemies.Count}");
+        enemiesLeftUpdateText();
 
         if (AllEnemiesDead)
         {
-            Debug.Log("All enemies dead");
+            enemiesLeftUpdateText();
         }
+    }
+
+    private void enemiesLeftUpdateText()
+    {
+        enemiesLeft.text = $"Enemies left: {aliveEnemies.Count}";
     }
 }
