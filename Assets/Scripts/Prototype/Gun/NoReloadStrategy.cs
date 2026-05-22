@@ -11,4 +11,9 @@ public class NoReloadStrategy : IReloadStrategy
     {
         return currentAmmo;
     }
+
+    public bool CanReload()
+    {
+        return false;
+    }
 }

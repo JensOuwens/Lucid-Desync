@@ -5015,7 +5015,7 @@ MonoBehaviour:
   gunDamage: 10
   timeBetweenShots: 0.2
   gunPrefab: {fileID: 816901047}
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: 4659432540297254229, guid: d65d95810108bae4eb0e4d23da547e31, type: 3}
   gunAnimator: {fileID: 816901052}
   maxAmmo: 6
   reloadTime: 1.5

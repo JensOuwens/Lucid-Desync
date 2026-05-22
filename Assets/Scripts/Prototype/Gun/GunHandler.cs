@@ -58,8 +58,11 @@ public class GunHandler : MonoBehaviour
             Shoot();
             nextFireTime = Time.time + timeBetweenShots;
         }
-
-        if (Input.GetKeyDown(KeyCode.R) && !isReloading)
+        
+        if (Input.GetKeyDown(KeyCode.R)
+            && !isReloading
+            && currentAmmo < maxAmmo
+            && currentReloadStrategy.CanReload())
         {
             Reload();
         }
@@ -78,9 +81,21 @@ public class GunHandler : MonoBehaviour
     
     private void Reload()
     {
+        StartCoroutine(ReloadCoroutine());
+    }
+
+    private IEnumerator ReloadCoroutine()
+    {
         isReloading = true;
+
+        reloadText.text = "Reloading...";
+
+        yield return new WaitForSeconds(reloadTime);
+
         currentAmmo = currentReloadStrategy.Reload(currentAmmo, maxAmmo);
+
         UpdateAmmoUI();
+
         isReloading = false;
     }
 
