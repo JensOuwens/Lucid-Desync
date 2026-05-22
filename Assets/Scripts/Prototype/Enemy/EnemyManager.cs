@@ -16,11 +16,6 @@ public class EnemyManager : MonoBehaviour
 
     public bool AllEnemiesDead => aliveEnemies.Count == 0;
 
-    private void Start()
-    {
-        SpawnFastEnemies(15);
-    }
-
     public void SpawnFastEnemies(int amount)
     {
         for (int i = 0; i < amount; i++)
