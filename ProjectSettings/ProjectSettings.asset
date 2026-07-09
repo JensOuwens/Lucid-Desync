@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: JensOuwens
   productName: Lucid Desync
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -922,7 +922,7 @@ PlayerSettings:
   qnxGraphicConfPath: 
   apiCompatibilityLevel: 6
   captureStartupLogs: {}
-  activeInputHandler: 2
+  activeInputHandler: 1
   windowsGamepadBackendHint: 0
   cloudProjectId: 867bf424-42c8-4844-8687-e5ff221a05ed
   framebufferDepthMemorylessMode: 0
