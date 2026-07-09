@@ -54,15 +54,15 @@ public class LoopManager : MonoBehaviour
     {
         if (currentLoop == 0)
         {
-            StandardLoop(1);
+            StandardLoop(5);
         }
         else if (currentLoop == 1)
         {
-            RuleChangeLoop(2, 1);
+            RuleChangeLoop(7, 1);
         }
         else
         {
-            RuleChangeLoop(20, 2);
+            RuleChangeLoop(10, 2);
         }
     }
 
