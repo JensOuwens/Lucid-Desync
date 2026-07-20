@@ -1,14 +1,25 @@
 using UnityEngine;
 
-public class ShootCommand : ICommand
+public class ShootCommand : IWeaponCommand
 {
-    public ShootCommand()
+    private RuleManager ruleManager;
+    public ShootCommand(RuleManager ruleManager)
     {
-        
+        this.ruleManager = ruleManager;
     }
-    
-    public void Execute()
+
+    public void ExecuteTap()
     {
-        throw new System.NotImplementedException();
+        //call the rulemanager command
+    }
+
+    public void ExecuteHold()
+    {
+        //call the rulemanager command
+    }
+
+    public void ExecuteRelease()
+    {
+        //call the rulemanager command
     }
 }

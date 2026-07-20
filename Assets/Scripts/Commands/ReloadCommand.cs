@@ -1,16 +1,16 @@
 using UnityEngine;
 
-public class ReloadCommand : MonoBehaviour
+public class ReloadCommand : ICommand
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    private RuleManager ruleManager;
 
-    // Update is called once per frame
-    void Update()
+    public ReloadCommand(RuleManager ruleManager)
     {
-        
+        this.ruleManager = ruleManager;
+    }
+    
+    public void Execute()
+    {
+        //call the rulemanager command
     }
 }

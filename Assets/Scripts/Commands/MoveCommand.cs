@@ -1,16 +1,16 @@
 using UnityEngine;
 
-public class MoveCommand : MonoBehaviour
+public class MoveCommand : IDirectionalCommand
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private RuleManager ruleManager;
+
+    private MoveCommand (RuleManager ruleManager)
     {
-        
+        this.ruleManager = ruleManager;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Execute(Vector2 direction)
     {
-        
+        //call the rulemanager command
     }
 }
