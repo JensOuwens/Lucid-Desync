@@ -11,6 +11,6 @@ public class ReloadCommand : ICommand
     
     public void Execute()
     {
-        //call the rulemanager command
+        ruleManager.CurrentReloadRule.Reload();
     }
 }

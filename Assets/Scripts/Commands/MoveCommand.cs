@@ -11,6 +11,6 @@ public class MoveCommand : IDirectionalCommand
 
     public void Execute(Vector2 direction)
     {
-        //call the rulemanager command
+        ruleManager.CurrentMovementRule.Move(direction);
     }
 }

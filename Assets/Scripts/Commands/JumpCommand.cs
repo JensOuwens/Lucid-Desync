@@ -11,6 +11,6 @@ public class JumpCommand : ICommand
     
     public void Execute()
     {
-        //call the rulemanager command
+        ruleManager.CurrentMovementRule.Jump();
     }
 }

@@ -10,16 +10,16 @@ public class ShootCommand : IWeaponCommand
 
     public void ExecuteTap()
     {
-        //call the rulemanager command
+        ruleManager.CurrentWeaponRule.Press();
     }
 
     public void ExecuteHold()
     {
-        //call the rulemanager command
+        ruleManager.CurrentWeaponRule.Hold();
     }
 
     public void ExecuteRelease()
     {
-        //call the rulemanager command
+        ruleManager.CurrentWeaponRule.Release();
     }
 }

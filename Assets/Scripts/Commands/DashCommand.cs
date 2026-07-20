@@ -11,6 +11,6 @@ public class DashCommand : ICommand
     
     public void Execute()
     {
-        //call the rulemanager command
+        ruleManager.CurrentMovementRule.Dash();
     }
 }

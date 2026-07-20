@@ -7,38 +7,34 @@ public class RuleManager : MonoBehaviour
     /// </summary>
     
     //current commands
-    // public IWeaponCommand currentShootCommand;
-    // public IDirectionalCommand currentMoveCommand;
-    // public ICommand currentJumpCommand;
-    // public ICommand currentDashCommand;
-    // public ICommand currentReloadCommand;
-    //
-    // //shoot commands
-    // private IWeaponCommand hitscanShootCommand;
-    // private IWeaponCommand chargeShootCommand;
-    // private IWeaponCommand projectileShootCommand;
-    // private IWeaponCommand swordShootCommand;
-    //
-    // //move commands
-    // private IDirectionalCommand boomerMoveCommand;
-    // private IDirectionalCommand moonMoveCommand;
-    // private IDirectionalCommand physicsMoveCommand;
-    // private IDirectionalCommand fastMoveCommand;
-    //
-    // //jump commands
-    // private ICommand noJumpCommand;
-    // private ICommand normalJumpCommand;
-    // private ICommand moonJumpCommand;
-    // private ICommand wallJumpCommand;
-    //
-    // //dash commands
-    // private ICommand noDashCommand;
-    // private ICommand normalDashCommand;
-    //
-    // //reload commands
-    // private ICommand noReloadCommand;
-    // private ICommand RevolverReloadCommand;
-    // private ICommand swordReloadCommand;
+        public IHealthRule CurrentHealthRule;
+        public IMovementRule CurrentMovementRule;
+        public IReloadRule CurrentReloadRule;
+        public IWeaponRule CurrentWeaponRule;
+        
+    //shoot Rules
+        private IWeaponRule hitscanShootRule;
+        private IWeaponRule chargeShootRule;
+        private IWeaponRule projectileShootRule;
+        private IWeaponRule swordShootRule;
+    
+    //move Rules
+        private IMovementRule boomerMoveRule;
+        private IMovementRule moonMoveRule;
+        private IMovementRule physicsMoveRule;
+        private IMovementRule fastMoveRule;
+    
+    //reload Rules
+        private IReloadRule noReloadRule;
+        private IReloadRule revolverReloadRule;
+        private IReloadRule swordReloadRule;
+        
+    //Health Rules
+        private IHealthRule normalHealthRule;
+        private IHealthRule shieldHealthRule;
+        private IHealthRule maskHealthRule;
+        private IHealthRule timerHealthRule;
+    
 
     private void Awake()
     {
