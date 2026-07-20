@@ -35,6 +35,8 @@ public class RuleManager : MonoBehaviour
     private ICommand noReloadCommand;
     private ICommand RevolverReloadCommand;
     private ICommand swordReloadCommand;
+    
+    
 
 
 }
