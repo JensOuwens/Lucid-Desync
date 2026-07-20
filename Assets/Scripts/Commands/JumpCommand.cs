@@ -4,7 +4,7 @@ public class JumpCommand : ICommand
 {
     private RuleManager ruleManager;
 
-    private JumpCommand(RuleManager ruleManager)
+    public JumpCommand(RuleManager ruleManager)
     {
         this.ruleManager = ruleManager;
     }

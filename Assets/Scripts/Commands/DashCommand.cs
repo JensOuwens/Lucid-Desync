@@ -4,7 +4,7 @@ public class DashCommand : ICommand
 {
     private RuleManager ruleManager;
 
-    private DashCommand(RuleManager ruleManager)
+    public DashCommand(RuleManager ruleManager)
     {
         this.ruleManager = ruleManager;
     }

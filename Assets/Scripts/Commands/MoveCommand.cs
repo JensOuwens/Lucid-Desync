@@ -4,7 +4,7 @@ public class MoveCommand : IDirectionalCommand
 {
     private RuleManager ruleManager;
 
-    private MoveCommand (RuleManager ruleManager)
+    public MoveCommand (RuleManager ruleManager)
     {
         this.ruleManager = ruleManager;
     }

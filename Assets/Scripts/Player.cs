@@ -9,10 +9,23 @@ public class Player : MonoBehaviour, IDamagable
     [SerializeField] private RuleManager ruleManager;
 
     private PlayerInput inputActions;
+    
+    //commands
+    private IWeaponCommand shootCommand;
+    private IDirectionalCommand moveCommand;
+    private ICommand jumpCommand;
+    private ICommand dashCommand;
+    private ICommand reloadCommand;
 
     private void Awake()
     {
         inputActions = new PlayerInput();
+
+        shootCommand = new ShootCommand(ruleManager);
+        moveCommand = new MoveCommand(ruleManager);
+        jumpCommand = new JumpCommand(ruleManager);
+        dashCommand = new DashCommand(ruleManager);
+        reloadCommand = new ReloadCommand(ruleManager);
     }
 
     private void OnEnable()
@@ -24,42 +37,42 @@ public class Player : MonoBehaviour, IDamagable
     {
         // Movement
         Vector2 directionalInput = inputActions.Player.Move.ReadValue<Vector2>();
-        //ruleManager.Move(directionalInput);
+        moveCommand.Execute(directionalInput);
 
         // Jump
         if (inputActions.Player.Jump.WasPressedThisFrame())
         {
-            //ruleManager.Jump();
+            jumpCommand.Execute();
         }
 
         // Dash
         if (inputActions.Player.Sprint.WasPressedThisFrame())
         {
-            //ruleManager.Dash();
+            dashCommand.Execute();
         }
 
         // Reload
         if (inputActions.Player.Reload.WasPressedThisFrame())
         {
-            //ruleManager.Reload();
+            reloadCommand.Execute();
         }
 
         // Fire pressed
         if (inputActions.Player.Attack.WasPressedThisFrame())
         {
-            //ruleManager.FirePressed();
+            shootCommand.ExecuteTap();
         }
 
         // Fire held
         if (inputActions.Player.Attack.IsPressed())
         {
-            //ruleManager.FireHeld();
+            shootCommand.ExecuteHold();
         }
 
         // Fire released
         if (inputActions.Player.Attack.WasReleasedThisFrame())
         {
-            //ruleManager.FireReleased();
+            shootCommand.ExecuteRelease();
         }
     }
 
