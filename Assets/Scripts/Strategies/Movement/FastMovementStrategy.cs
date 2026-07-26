@@ -23,7 +23,7 @@ public class FastMovementStrategy : IMovementRule
     }
 
 
-    public void Jump()
+    public float Jump()
     {
         throw new System.NotImplementedException();
     }

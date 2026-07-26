@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class JumpCommand : ICommand
+public class JumpCommand : IFloatCommand
 {
     private RuleManager ruleManager;
 
@@ -9,8 +9,8 @@ public class JumpCommand : ICommand
         this.ruleManager = ruleManager;
     }
     
-    public void Execute()
+    public float Execute()
     {
-        ruleManager.CurrentMovementRule.Jump();
+        return ruleManager.CurrentMovementRule.Jump();
     }
 }

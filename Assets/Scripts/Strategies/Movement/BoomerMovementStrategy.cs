@@ -25,9 +25,9 @@ public class BoomerMovementStrategy : IMovementRule
         playerCharacterController.Move( movement * (moveSpeed * Time.deltaTime));
     }
 
-    public void Jump()
+    public float Jump()
     {
-        //do nothing
+        return 0;
     }
 
     public void Dash()

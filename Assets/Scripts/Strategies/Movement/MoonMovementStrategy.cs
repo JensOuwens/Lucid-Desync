@@ -10,6 +10,7 @@ public class MoonMovementStrategy : IMovementRule
     private GameObject playerGameObject;
 
     private float jumpForce;
+    private float verticalVelocity;
 
     public MoonMovementStrategy (float moveSpeed, CharacterController playerCharacterController, GameObject playerGameObject, float jumpForce)
     {
@@ -17,6 +18,7 @@ public class MoonMovementStrategy : IMovementRule
         this.playerCharacterController = playerCharacterController;
         this.playerGameObject = playerGameObject;
         this.jumpForce = jumpForce;
+        
     }
     
     public void Move(Vector2 direction)
@@ -28,9 +30,14 @@ public class MoonMovementStrategy : IMovementRule
         playerCharacterController.Move( movement * (moveSpeed * Time.deltaTime));
     }
 
-    public void Jump()
+    public float Jump()
     {
-        throw new System.NotImplementedException();
+        if (playerCharacterController.isGrounded)
+        {
+            verticalVelocity = jumpForce;
+        }
+
+        return verticalVelocity;
     }
 
     public void Dash()

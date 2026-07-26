@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Handles action mapping, sends inputs through to rule manager.
+/// TODO: figure out jump logic
 /// </summary>
 public class Player : MonoBehaviour, IDamagable
 {
@@ -14,11 +15,13 @@ public class Player : MonoBehaviour, IDamagable
     //commands
     private IWeaponCommand shootCommand;
     private IDirectionalCommand moveCommand;
-    private ICommand jumpCommand;
+    private IFloatCommand jumpCommand;
     private ICommand dashCommand;
     private ICommand reloadCommand;
     
     private CharacterController playerCharacterController;
+    
+    private Vector3 velocity;
 
     private void Awake()
     {
@@ -49,22 +52,15 @@ public class Player : MonoBehaviour, IDamagable
         //Camera
         Vector2 lookInput = inputActions.Player.Look.ReadValue<Vector2>();
         firstPersonCamera.Look(lookInput);
-        
-        //gravity
-        Vector3 velocity = ruleManager.CurrentGravityRule.ApplyGravity(playerCharacterController.velocity, Time.deltaTime);
-        
-        if (playerCharacterController.isGrounded && velocity.y < 0)
-        {
-            velocity.y = -1f;
-        }
-        
-        playerCharacterController.Move(velocity);
-        
 
         // Jump
         if (inputActions.Player.Jump.WasPressedThisFrame())
         {
-            jumpCommand.Execute();
+            float jumpVelocity  = jumpCommand.Execute();
+            if (jumpVelocity != 0)
+            {
+                velocity.y = jumpVelocity;
+            }
         }
 
         // Dash
@@ -96,6 +92,25 @@ public class Player : MonoBehaviour, IDamagable
         {
             shootCommand.ExecuteRelease();
         }
+    }
+
+    //handle physics
+    private void FixedUpdate()
+    {
+        HandleGravity();
+    }
+    
+    private void HandleGravity()
+    {
+        //gravity
+        velocity = ruleManager.CurrentGravityRule.ApplyGravity(velocity, Time.deltaTime);
+
+        if (playerCharacterController.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -1f;
+        }
+        
+        playerCharacterController.Move(velocity * Time.deltaTime);
     }
 
     public void Hurt(int damage)

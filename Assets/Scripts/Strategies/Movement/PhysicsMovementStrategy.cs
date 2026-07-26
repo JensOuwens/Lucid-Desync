@@ -7,7 +7,7 @@ public class PhysicsMovementStrategy : IMovementRule
         throw new System.NotImplementedException();
     }
 
-    public void Jump()
+    public float Jump()
     {
         throw new System.NotImplementedException();
     }
