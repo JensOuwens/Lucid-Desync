@@ -17,6 +17,8 @@ public class Player : MonoBehaviour, IDamagable
     private ICommand jumpCommand;
     private ICommand dashCommand;
     private ICommand reloadCommand;
+    
+    private CharacterController playerCharacterController;
 
     private void Awake()
     {
@@ -27,8 +29,10 @@ public class Player : MonoBehaviour, IDamagable
         jumpCommand = new JumpCommand(ruleManager);
         dashCommand = new DashCommand(ruleManager);
         reloadCommand = new ReloadCommand(ruleManager);
-        
-        ruleManager.SetupStrategies(this.gameObject.GetComponent<CharacterController>(), this.gameObject);
+
+        playerCharacterController = this.gameObject.GetComponent<CharacterController>();
+            
+        ruleManager.SetupStrategies(playerCharacterController, this.gameObject);
     }
 
     private void OnEnable()
@@ -45,6 +49,17 @@ public class Player : MonoBehaviour, IDamagable
         //Camera
         Vector2 lookInput = inputActions.Player.Look.ReadValue<Vector2>();
         firstPersonCamera.Look(lookInput);
+        
+        //gravity
+        Vector3 velocity = ruleManager.CurrentGravityRule.ApplyGravity(playerCharacterController.velocity, Time.deltaTime);
+        
+        if (playerCharacterController.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -1f;
+        }
+        
+        playerCharacterController.Move(velocity);
+        
 
         // Jump
         if (inputActions.Player.Jump.WasPressedThisFrame())

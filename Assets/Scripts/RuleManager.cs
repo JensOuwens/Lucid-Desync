@@ -11,6 +11,7 @@ public class RuleManager : MonoBehaviour
         public IMovementRule CurrentMovementRule;
         public IReloadRule CurrentReloadRule;
         public IWeaponRule CurrentWeaponRule;
+        public IGravityRule CurrentGravityRule;
         
     //shoot Rules
         private IWeaponRule hitscanShootRule;
@@ -34,12 +35,20 @@ public class RuleManager : MonoBehaviour
         private IHealthRule shieldHealthRule;
         private IHealthRule maskHealthRule;
         private IHealthRule timerHealthRule;
+        
+    //Gravity Rules
+        private IGravityRule normalGravityRule;
+        private IGravityRule moonGravityRule;
 
         public void SetupStrategies(CharacterController controller, GameObject playerGameObject)
         {
             //create the rule constructors here
-            boomerMoveRule = new BoomerMovementStrategy(20, controller, playerGameObject);
+            boomerMoveRule = new BoomerMovementStrategy(0.35f, controller, playerGameObject);
             CurrentMovementRule = boomerMoveRule;
+
+            normalGravityRule = new NormalGravityRule();
+            moonGravityRule = new MoonGravityRule();
+            CurrentGravityRule = moonGravityRule;
         }
 
         public void ChangeRules(LoopData loopData)
@@ -100,6 +109,17 @@ public class RuleManager : MonoBehaviour
                     break;
                 case EMovementRule.Moon:
                     CurrentMovementRule = moonMoveRule;
+                    break;
+            }
+            
+            //gravity rule changes
+            switch (loopData.currentGravityType)
+            {
+                case EGravityType.normal:
+                    CurrentGravityRule = normalGravityRule;
+                    break;
+                case EGravityType.moon :
+                    CurrentGravityRule = moonGravityRule;
                     break;
             }
         }

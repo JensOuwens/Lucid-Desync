@@ -13,6 +13,7 @@ public class LoopData : ScriptableObject
     public EHealtRule currentHealthRule;
     public EGunRule currentGunRule;
     public EMovementRule currentMovementRule;
+    public EGravityType currentGravityType;
     public EUIType currentUIType;
     public EMusicType currentMusicType;
 
