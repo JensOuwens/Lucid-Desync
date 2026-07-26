@@ -35,6 +35,13 @@ public class RuleManager : MonoBehaviour
         private IHealthRule maskHealthRule;
         private IHealthRule timerHealthRule;
 
+        public void SetupStrategies(CharacterController controller)
+        {
+            //create the rule constructors here
+            boomerMoveRule = new BoomerMovementStrategy(10, controller);
+            CurrentMovementRule = boomerMoveRule;
+        }
+
         public void ChangeRules(LoopData loopData)
         {
             //health rule change

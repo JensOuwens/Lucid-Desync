@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestData
   m_EditorClassIdentifier: Assembly-CSharp::LoopData
   loopNumber: 0
-  enemyCount: 0
+  enemyCount: 4
   currentHealthRule: 0
   currentGunRule: 0
   currentMovementRule: 0

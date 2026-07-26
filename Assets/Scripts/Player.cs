@@ -26,6 +26,8 @@ public class Player : MonoBehaviour, IDamagable
         jumpCommand = new JumpCommand(ruleManager);
         dashCommand = new DashCommand(ruleManager);
         reloadCommand = new ReloadCommand(ruleManager);
+        
+        ruleManager.SetupStrategies(this.gameObject.GetComponent<CharacterController>());
     }
 
     private void OnEnable()
@@ -78,12 +80,12 @@ public class Player : MonoBehaviour, IDamagable
 
     public void Hurt(int damage)
     {
-        throw new System.NotImplementedException();
+        ruleManager.CurrentHealthRule.Damage();
     }
 
     public void Die()
     {
-        throw new System.NotImplementedException();
+        ruleManager.CurrentHealthRule.Die();
     }
     
     private void OnDisable()
