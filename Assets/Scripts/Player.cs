@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour, IDamagable
 {
     [SerializeField] private RuleManager ruleManager;
+    [SerializeField] private FirstPersonCamera firstPersonCamera;
 
     private PlayerInput inputActions;
     
@@ -27,7 +28,7 @@ public class Player : MonoBehaviour, IDamagable
         dashCommand = new DashCommand(ruleManager);
         reloadCommand = new ReloadCommand(ruleManager);
         
-        ruleManager.SetupStrategies(this.gameObject.GetComponent<CharacterController>());
+        ruleManager.SetupStrategies(this.gameObject.GetComponent<CharacterController>(), this.gameObject);
     }
 
     private void OnEnable()
@@ -40,6 +41,10 @@ public class Player : MonoBehaviour, IDamagable
         // Movement
         Vector2 directionalInput = inputActions.Player.Move.ReadValue<Vector2>();
         moveCommand.Execute(directionalInput);
+        
+        //Camera
+        Vector2 lookInput = inputActions.Player.Look.ReadValue<Vector2>();
+        firstPersonCamera.Look(lookInput);
 
         // Jump
         if (inputActions.Player.Jump.WasPressedThisFrame())

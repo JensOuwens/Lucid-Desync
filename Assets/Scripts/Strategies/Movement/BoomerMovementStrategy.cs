@@ -7,17 +7,22 @@ public class BoomerMovementStrategy : IMovementRule
 {
     private float moveSpeed;
     private CharacterController playerCharacterController;
+    private GameObject playerGameObject;
 
-    public BoomerMovementStrategy (float moveSpeed, CharacterController playerCharacterController)
+    public BoomerMovementStrategy (float moveSpeed, CharacterController playerCharacterController, GameObject playerGameObject)
     {
         this.moveSpeed = moveSpeed;
         this.playerCharacterController = playerCharacterController;
+        this.playerGameObject = playerGameObject;
     }
     
     public void Move(Vector2 direction)
     {
         direction.Normalize();
-        playerCharacterController.Move( new Vector3(direction.x, 0, direction.y) * (moveSpeed * Time.deltaTime));
+
+        Vector3 movement = playerGameObject.transform.right * direction.x + playerGameObject.transform.forward * direction.y;
+        
+        playerCharacterController.Move( movement * (moveSpeed * Time.deltaTime));
     }
 
     public void Jump()
