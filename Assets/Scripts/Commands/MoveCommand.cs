@@ -9,8 +9,8 @@ public class MoveCommand : IDirectionalCommand
         this.ruleManager = ruleManager;
     }
 
-    public void Execute(Vector2 direction)
+    public Vector3 Execute(Vector2 direction)
     {
-        ruleManager.CurrentMovementRule.Move(direction);
+        return ruleManager.CurrentMovementRule.Move(direction);
     }
 }

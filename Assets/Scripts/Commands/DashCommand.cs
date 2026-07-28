@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DashCommand : ICommand
+public class DashCommand : IDashCommand
 {
     private RuleManager ruleManager;
 
@@ -9,8 +9,8 @@ public class DashCommand : ICommand
         this.ruleManager = ruleManager;
     }
     
-    public void Execute()
+    public Vector3 Execute()
     {
-        ruleManager.CurrentMovementRule.Dash();
+        return ruleManager.CurrentMovementRule.Dash();
     }
 }

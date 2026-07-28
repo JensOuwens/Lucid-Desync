@@ -2,5 +2,5 @@ using UnityEngine;
 
 public interface IDirectionalCommand
 {
-    void Execute(Vector2 direction);
+    Vector3 Execute(Vector2 direction);
 }

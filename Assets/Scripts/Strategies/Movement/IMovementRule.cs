@@ -2,9 +2,9 @@ using UnityEngine;
 
 public interface IMovementRule
 {
-    public void Move(Vector2 direction);
+    public Vector3 Move(Vector2 direction);
 
     public float Jump();
 
-    public void Dash();
+    public Vector3 Dash();
 }

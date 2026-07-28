@@ -6,23 +6,23 @@ using UnityEngine;
 public class BoomerMovementStrategy : IMovementRule
 {
     private float moveSpeed;
-    private CharacterController playerCharacterController;
     private GameObject playerGameObject;
 
-    public BoomerMovementStrategy (float moveSpeed, CharacterController playerCharacterController, GameObject playerGameObject)
+    public BoomerMovementStrategy (float moveSpeed, GameObject playerGameObject)
     {
         this.moveSpeed = moveSpeed;
-        this.playerCharacterController = playerCharacterController;
         this.playerGameObject = playerGameObject;
     }
     
-    public void Move(Vector2 direction)
+    public Vector3 Move(Vector2 direction)
     {
         direction.Normalize();
 
-        Vector3 movement = playerGameObject.transform.right * direction.x + playerGameObject.transform.forward * direction.y;
-        
-        playerCharacterController.Move( movement * (moveSpeed * Time.deltaTime));
+        Vector3 movement =
+            playerGameObject.transform.right * direction.x +
+            playerGameObject.transform.forward * direction.y;
+
+        return movement * moveSpeed;
     }
 
     public float Jump()
@@ -30,8 +30,8 @@ public class BoomerMovementStrategy : IMovementRule
         return 0;
     }
 
-    public void Dash()
+    public Vector3 Dash()
     {
-        //do nothing
+        return Vector3.zero;
     }
 }

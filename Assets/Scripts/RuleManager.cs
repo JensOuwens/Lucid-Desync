@@ -3,6 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// TODO: Assign all rules once the rules have been made
+/// TODO: change variables of strategies
 /// </summary>
 public class RuleManager : MonoBehaviour
 {
@@ -43,13 +44,15 @@ public class RuleManager : MonoBehaviour
         public void SetupStrategies(CharacterController controller, GameObject playerGameObject)
         {
             //create the rule constructors here
-            boomerMoveRule = new BoomerMovementStrategy(12f, controller, playerGameObject);
-            moonMoveRule = new MoonMovementStrategy(7f, controller, playerGameObject, 5f);
-            CurrentMovementRule = moonMoveRule;
+            boomerMoveRule = new BoomerMovementStrategy(12f, playerGameObject);
+            moonMoveRule = new MoonMovementStrategy(7f, playerGameObject, 5f);
+            fastMoveRule = new FastMovementStrategy(20f, playerGameObject, 5f, 50f);
+            physicsMoveRule = new PhysicsMovementStrategy(playerGameObject, 20f, 12f, 2f);
+            CurrentMovementRule = physicsMoveRule;
 
             normalGravityRule = new NormalGravityRule();
             moonGravityRule = new MoonGravityRule();
-            CurrentGravityRule = moonGravityRule;
+            CurrentGravityRule = normalGravityRule;
         }
 
         public void ChangeRules(LoopData loopData)

@@ -1,35 +1,43 @@
 using UnityEngine;
 
+/// <summary>
+/// faster movement with dash
+/// </summary>
 public class FastMovementStrategy : IMovementRule
 {
     private float moveSpeed;
-    private CharacterController playerCharacterController;
     private GameObject playerGameObject;
+    
+    private float jumpForce;
+    private float dashForce;
 
-    public FastMovementStrategy (float moveSpeed, CharacterController playerCharacterController, GameObject playerGameObject)
+    public FastMovementStrategy (float moveSpeed, GameObject playerGameObject, float jumpForce, float  dashForce)
     {
         this.moveSpeed = moveSpeed;
-        this.playerCharacterController = playerCharacterController;
         this.playerGameObject = playerGameObject;
+        this.jumpForce = jumpForce;
+        this.dashForce = dashForce;
     }
     
-    public void Move(Vector2 direction)
+    public Vector3 Move(Vector2 direction)
     {
         direction.Normalize();
 
-        Vector3 movement = playerGameObject.transform.right * direction.x + playerGameObject.transform.forward * direction.y;
-        
-        playerCharacterController.Move( movement * (moveSpeed * Time.deltaTime));
+        Vector3 movement =
+            playerGameObject.transform.right * direction.x +
+            playerGameObject.transform.forward * direction.y;
+
+        return movement * moveSpeed;
     }
 
 
     public float Jump()
     {
-        throw new System.NotImplementedException();
+        return jumpForce;
     }
 
-    public void Dash()
+    public Vector3 Dash()
     {
-        throw new System.NotImplementedException();
+        return playerGameObject.transform.forward * dashForce;
     }
 }

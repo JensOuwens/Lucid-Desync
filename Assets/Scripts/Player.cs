@@ -20,12 +20,23 @@ public class Player : MonoBehaviour, IDamagable
     private IWeaponCommand shootCommand;
     private IDirectionalCommand moveCommand;
     private IFloatCommand jumpCommand;
-    private ICommand dashCommand;
+    private IDashCommand dashCommand;
     private ICommand reloadCommand;
     
     private CharacterController playerCharacterController;
     
-    private Vector3 velocity;
+    //velocity
+    private Vector3 horizontalVelocity;
+    private float verticalVelocity;
+    
+    //dash stuff
+    private Vector3 dashVelocity;
+    private float dashTimer;
+    private float dashCooldownTimer;
+
+    [Header("Dash stuff")]
+    [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private float dashCooldown = 1f;
 
     private void Awake()
     {
@@ -49,11 +60,11 @@ public class Player : MonoBehaviour, IDamagable
 
     private void Update()
     {
-        Debug.Log(IsGrounded());
-        
         // Movement
         Vector2 directionalInput = inputActions.Player.Move.ReadValue<Vector2>();
-        moveCommand.Execute(directionalInput);
+
+        horizontalVelocity =
+            ruleManager.CurrentMovementRule.Move(directionalInput);
         
         //Camera
         Vector2 lookInput = inputActions.Player.Look.ReadValue<Vector2>();
@@ -68,14 +79,19 @@ public class Player : MonoBehaviour, IDamagable
             
             if (jumpVelocity > 0f)
             {
-                velocity.y = jumpVelocity;
+                verticalVelocity  = jumpVelocity;
             }
         }
 
         // Dash
         if (inputActions.Player.Sprint.WasPressedThisFrame())
         {
-            dashCommand.Execute();
+            if (dashCooldownTimer <= 0)
+            {
+                dashVelocity = dashCommand.Execute();
+                dashTimer = dashDuration;
+                dashCooldownTimer = dashCooldown;
+            }
         }
 
         // Reload
@@ -105,17 +121,51 @@ public class Player : MonoBehaviour, IDamagable
         HandleGravity();
     }
     
+    //handles application of velocity
     private void HandleGravity()
     {
-        //gravity
-        if (playerCharacterController.isGrounded && velocity.y < 0)
+        HandleDash();
+        
+        if (IsGrounded() && verticalVelocity < 0)
         {
-            velocity.y = -1f;
+            verticalVelocity = -1f;
         }
-        
-        velocity = ruleManager.CurrentGravityRule.ApplyGravity(velocity, Time.deltaTime);
-        
-        playerCharacterController.Move(velocity * Time.deltaTime);
+
+        Vector3 gravityVelocity =
+            ruleManager.CurrentGravityRule.ApplyGravity(
+                Vector3.up * verticalVelocity,
+                Time.deltaTime
+            );
+
+        verticalVelocity = gravityVelocity.y;
+
+
+        Vector3 finalVelocity =
+            horizontalVelocity +
+            dashVelocity +
+            Vector3.up * verticalVelocity;
+
+
+        playerCharacterController.Move(
+            finalVelocity * Time.deltaTime
+        );
+    }
+    
+    private void HandleDash()
+    {
+        if (dashCooldownTimer > 0)
+        {
+            dashCooldownTimer -= Time.deltaTime;
+        }
+
+        if (dashTimer > 0)
+        {
+            dashTimer -= Time.deltaTime;
+        }
+        else
+        {
+            dashVelocity = Vector3.zero;
+        }
     }
     
     private bool IsGrounded()

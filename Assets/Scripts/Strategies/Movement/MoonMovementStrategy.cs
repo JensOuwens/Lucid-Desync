@@ -6,28 +6,27 @@ using UnityEngine;
 public class MoonMovementStrategy : IMovementRule
 {
     private float moveSpeed;
-    private CharacterController playerCharacterController;
     private GameObject playerGameObject;
 
     private float jumpForce;
 
-    public MoonMovementStrategy (float moveSpeed, CharacterController playerCharacterController, GameObject playerGameObject, float jumpForce)
+    public MoonMovementStrategy (float moveSpeed, GameObject playerGameObject, float jumpForce)
     {
         this.moveSpeed = moveSpeed;
-        this.playerCharacterController = playerCharacterController;
         this.playerGameObject = playerGameObject;
         this.jumpForce = jumpForce;
         
     }
     
-    public void Move(Vector2 direction)
+    public Vector3 Move(Vector2 direction)
     {
-        
         direction.Normalize();
 
-        Vector3 movement = playerGameObject.transform.right * direction.x + playerGameObject.transform.forward * direction.y;
-        
-        playerCharacterController.Move( movement * (moveSpeed * Time.deltaTime));
+        Vector3 movement =
+            playerGameObject.transform.right * direction.x +
+            playerGameObject.transform.forward * direction.y;
+
+        return movement * moveSpeed;
     }
 
     public float Jump()
@@ -35,8 +34,8 @@ public class MoonMovementStrategy : IMovementRule
         return jumpForce;
     }
 
-    public void Dash()
+    public Vector3 Dash()
     {
-        //do nothing
+        return Vector3.zero;
     }
 }
