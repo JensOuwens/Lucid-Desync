@@ -43,8 +43,9 @@ public class RuleManager : MonoBehaviour
         public void SetupStrategies(CharacterController controller, GameObject playerGameObject)
         {
             //create the rule constructors here
-            boomerMoveRule = new BoomerMovementStrategy(0.35f, controller, playerGameObject);
-            CurrentMovementRule = boomerMoveRule;
+            boomerMoveRule = new BoomerMovementStrategy(12f, controller, playerGameObject);
+            moonMoveRule = new MoonMovementStrategy(7f, controller, playerGameObject, 5f);
+            CurrentMovementRule = moonMoveRule;
 
             normalGravityRule = new NormalGravityRule();
             moonGravityRule = new MoonGravityRule();

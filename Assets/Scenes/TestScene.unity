@@ -144,7 +144,7 @@ Transform:
   m_GameObject: {fileID: 18965037}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.3, z: 0}
+  m_LocalPosition: {x: 0, y: 1.043, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -354,6 +354,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   ruleManager: {fileID: 1366308575}
   firstPersonCamera: {fileID: 83626781}
+  groundCheckDistance: 1.1
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!136 &297605976
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -503,7 +507,7 @@ GameObject:
   - component: {fileID: 720414136}
   - component: {fileID: 720414135}
   - component: {fileID: 720414134}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -3,12 +3,16 @@ using UnityEngine.InputSystem;
 
 /// <summary>
 /// Handles action mapping, sends inputs through to rule manager.
-/// TODO: figure out jump logic
 /// </summary>
 public class Player : MonoBehaviour, IDamagable
 {
+    [Header("References")]
     [SerializeField] private RuleManager ruleManager;
     [SerializeField] private FirstPersonCamera firstPersonCamera;
+    
+    [Header("ground check")]
+    [SerializeField] private float groundCheckDistance = 0.2f;
+    [SerializeField] private LayerMask groundMask;
 
     private PlayerInput inputActions;
     
@@ -45,6 +49,8 @@ public class Player : MonoBehaviour, IDamagable
 
     private void Update()
     {
+        Debug.Log(IsGrounded());
+        
         // Movement
         Vector2 directionalInput = inputActions.Player.Move.ReadValue<Vector2>();
         moveCommand.Execute(directionalInput);
@@ -56,8 +62,11 @@ public class Player : MonoBehaviour, IDamagable
         // Jump
         if (inputActions.Player.Jump.WasPressedThisFrame())
         {
+            if (!IsGrounded()) return;
+            
             float jumpVelocity  = jumpCommand.Execute();
-            if (jumpVelocity != 0)
+            
+            if (jumpVelocity > 0f)
             {
                 velocity.y = jumpVelocity;
             }
@@ -92,25 +101,33 @@ public class Player : MonoBehaviour, IDamagable
         {
             shootCommand.ExecuteRelease();
         }
-    }
-
-    //handle physics
-    private void FixedUpdate()
-    {
+        
         HandleGravity();
     }
     
     private void HandleGravity()
     {
         //gravity
-        velocity = ruleManager.CurrentGravityRule.ApplyGravity(velocity, Time.deltaTime);
-
         if (playerCharacterController.isGrounded && velocity.y < 0)
         {
             velocity.y = -1f;
         }
         
+        velocity = ruleManager.CurrentGravityRule.ApplyGravity(velocity, Time.deltaTime);
+        
         playerCharacterController.Move(velocity * Time.deltaTime);
+    }
+    
+    private bool IsGrounded()
+    {
+        Vector3 origin = transform.position;
+
+        return Physics.Raycast(
+            origin,
+            Vector3.down,
+            groundCheckDistance,
+            groundMask
+        );
     }
 
     public void Hurt(int damage)

@@ -10,7 +10,6 @@ public class MoonMovementStrategy : IMovementRule
     private GameObject playerGameObject;
 
     private float jumpForce;
-    private float verticalVelocity;
 
     public MoonMovementStrategy (float moveSpeed, CharacterController playerCharacterController, GameObject playerGameObject, float jumpForce)
     {
@@ -23,6 +22,7 @@ public class MoonMovementStrategy : IMovementRule
     
     public void Move(Vector2 direction)
     {
+        
         direction.Normalize();
 
         Vector3 movement = playerGameObject.transform.right * direction.x + playerGameObject.transform.forward * direction.y;
@@ -32,12 +32,7 @@ public class MoonMovementStrategy : IMovementRule
 
     public float Jump()
     {
-        if (playerCharacterController.isGrounded)
-        {
-            verticalVelocity = jumpForce;
-        }
-
-        return verticalVelocity;
+        return jumpForce;
     }
 
     public void Dash()
