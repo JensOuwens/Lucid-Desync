@@ -1,6 +1,11 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public interface IReloadRule
 {
-    public void Reload();
+    public Task Reload();
+
+    public int GetAmmo();
+    
+    public void DeductAmmo();
 }

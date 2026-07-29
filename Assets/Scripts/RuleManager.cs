@@ -48,11 +48,15 @@ public class RuleManager : MonoBehaviour
             moonMoveRule = new MoonMovementStrategy(7f, playerGameObject, 5f);
             fastMoveRule = new FastMovementStrategy(20f, playerGameObject, 5f, 50f);
             physicsMoveRule = new PhysicsMovementStrategy(playerGameObject, 20f, 12f, 2f);
-            CurrentMovementRule = physicsMoveRule;
+            CurrentMovementRule = boomerMoveRule;
 
             normalGravityRule = new NormalGravityRule();
             moonGravityRule = new MoonGravityRule();
             CurrentGravityRule = normalGravityRule;
+
+            revolverReloadRule = new RevolverReload(6, 1.5f);
+            noReloadRule = new NoReloadRule();
+            CurrentReloadRule = noReloadRule;
         }
 
         public void ChangeRules(LoopData loopData)
