@@ -7,6 +7,5 @@ public enum EGunRule
     Boomer,
     Energy,
     Projectile,
-    Sword
 }
 

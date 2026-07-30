@@ -4,6 +4,7 @@ using UnityEngine;
 /// <summary>
 /// TODO: Assign all rules once the rules have been made
 /// TODO: change variables of strategies
+/// TODO: make variables serializable
 /// </summary>
 public class RuleManager : MonoBehaviour
 {
@@ -15,10 +16,10 @@ public class RuleManager : MonoBehaviour
         public IGravityRule CurrentGravityRule;
         
     //shoot Rules
-        private IWeaponRule hitscanShootRule;
+        private IWeaponRule boomerGunRule;
+        private IWeaponRule revolverGunRule;
         private IWeaponRule chargeShootRule;
         private IWeaponRule projectileShootRule;
-        private IWeaponRule swordShootRule;
     
     //move Rules
         private IMovementRule boomerMoveRule;
@@ -29,7 +30,6 @@ public class RuleManager : MonoBehaviour
     //reload Rules
         private IReloadRule noReloadRule;
         private IReloadRule revolverReloadRule;
-        private IReloadRule swordReloadRule;
         
     //Health Rules
         private IHealthRule normalHealthRule;
@@ -40,6 +40,9 @@ public class RuleManager : MonoBehaviour
     //Gravity Rules
         private IGravityRule normalGravityRule;
         private IGravityRule moonGravityRule;
+
+        [Header("enemy")] 
+        [SerializeField] private LayerMask enemyLayerMask;
 
         public void SetupStrategies(CharacterController controller, GameObject playerGameObject)
         {
@@ -57,6 +60,10 @@ public class RuleManager : MonoBehaviour
             revolverReloadRule = new RevolverReload(6, 1.5f);
             noReloadRule = new NoReloadRule();
             CurrentReloadRule = noReloadRule;
+
+            boomerGunRule = new HitscanGunRule(enemyLayerMask, 25, 0.55f, playerGameObject);
+            revolverGunRule = new HitscanGunRule(enemyLayerMask, 35, 1f, playerGameObject);
+            CurrentWeaponRule = boomerGunRule;
         }
 
         public void ChangeRules(LoopData loopData)
@@ -82,7 +89,7 @@ public class RuleManager : MonoBehaviour
             switch (loopData.currentGunRule)
             {
                 case EGunRule.Boomer :
-                    CurrentWeaponRule = hitscanShootRule;
+                    CurrentWeaponRule = boomerGunRule;
                     CurrentReloadRule = noReloadRule;
                     break;
                 case EGunRule.Energy :
@@ -94,12 +101,8 @@ public class RuleManager : MonoBehaviour
                     CurrentReloadRule = revolverReloadRule;
                     break;
                 case EGunRule.Revolver :
-                    CurrentWeaponRule = hitscanShootRule;
+                    CurrentWeaponRule = revolverGunRule;
                     CurrentReloadRule = revolverReloadRule;
-                    break;
-                case EGunRule.Sword :
-                    CurrentWeaponRule = swordShootRule;
-                    CurrentReloadRule = swordReloadRule;
                     break;
             }
             

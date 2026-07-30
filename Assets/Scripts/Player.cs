@@ -103,7 +103,17 @@ public class Player : MonoBehaviour, IDamagable
         // Fire pressed
         if (inputActions.Player.Attack.WasPressedThisFrame())
         {
-            shootCommand.ExecuteTap();
+            if (ruleManager.CurrentReloadRule.GetAmmo() > 0)
+            {
+                shootCommand.ExecuteTap();
+                ruleManager.CurrentReloadRule.DeductAmmo();
+                Debug.Log(ruleManager.CurrentReloadRule.GetAmmo());
+            }
+            else
+            {
+                Debug.Log("Reload");
+            }
+            
         }
 
         // Fire held
@@ -180,7 +190,7 @@ public class Player : MonoBehaviour, IDamagable
         );
     }
 
-    public void Hurt(int damage)
+    public void Hurt(float damage)
     {
         ruleManager.CurrentHealthRule.Damage();
     }

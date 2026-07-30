@@ -13,8 +13,7 @@ public class RevolverReload : IReloadRule
         this.maxAmmo = maxAmmo;
         this.reloadTimeInSeconds = reloadTime;
 
-        currentAmmo = 2;
-        //this.maxAmmo;
+        currentAmmo = this.maxAmmo;
     }
     
     public async Task Reload()
