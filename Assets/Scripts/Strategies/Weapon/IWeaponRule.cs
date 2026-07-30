@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface IWeaponRule
 {
-    public void Press();
+    public bool Press();
     public void Hold();
-    public void Release();
+    public bool Release();
 }

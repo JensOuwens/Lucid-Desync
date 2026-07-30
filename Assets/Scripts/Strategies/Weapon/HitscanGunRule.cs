@@ -17,11 +17,11 @@ public class HitscanGunRule : IWeaponRule
         playerGameObject = player;
     }
     
-    public void Press()
+    public bool Press()
     {
         // Check cooldown first
         if (Time.time < nextFireTime)
-            return;
+            return false;
 
         nextFireTime = Time.time + fireRate;
 
@@ -31,11 +31,11 @@ public class HitscanGunRule : IWeaponRule
                 playerGameObject.transform.forward,
                 out RaycastHit hitInfo,
                 100))
-            return;
+            return true;
 
         // Check if hit is in layermask
         if (((1 << hitInfo.collider.gameObject.layer) & enemyLayerMask.value) == 0)
-            return;
+            return true;
         
 
         // Damage
@@ -43,6 +43,8 @@ public class HitscanGunRule : IWeaponRule
         {
             damageable.Hurt(damage);
         }
+        
+        return true;
     }
 
     public void Hold()
@@ -50,8 +52,8 @@ public class HitscanGunRule : IWeaponRule
         //do nothing
     }
 
-    public void Release()
+    public bool Release()
     {
-        //do nothing
+        return false;
     }
 }

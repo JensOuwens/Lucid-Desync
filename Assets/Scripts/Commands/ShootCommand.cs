@@ -8,9 +8,9 @@ public class ShootCommand : IWeaponCommand
         this.ruleManager = ruleManager;
     }
 
-    public void ExecuteTap()
+    public bool ExecuteTap()
     {
-        ruleManager.CurrentWeaponRule.Press();
+        return ruleManager.CurrentWeaponRule.Press();
     }
 
     public void ExecuteHold()
@@ -18,8 +18,8 @@ public class ShootCommand : IWeaponCommand
         ruleManager.CurrentWeaponRule.Hold();
     }
 
-    public void ExecuteRelease()
+    public bool ExecuteRelease()
     {
-        ruleManager.CurrentWeaponRule.Release();
+        return ruleManager.CurrentWeaponRule.Release();
     }
 }

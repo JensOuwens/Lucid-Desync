@@ -2,7 +2,7 @@ using UnityEngine;
 
 public interface IWeaponCommand
 {
-    void ExecuteTap();
+    bool ExecuteTap();
     void ExecuteHold();
-    void ExecuteRelease();
+    bool ExecuteRelease();
 }

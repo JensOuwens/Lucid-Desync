@@ -105,15 +105,13 @@ public class Player : MonoBehaviour, IDamagable
         {
             if (ruleManager.CurrentReloadRule.GetAmmo() > 0)
             {
-                shootCommand.ExecuteTap();
-                ruleManager.CurrentReloadRule.DeductAmmo();
-                Debug.Log(ruleManager.CurrentReloadRule.GetAmmo());
+                bool fired = shootCommand.ExecuteTap();
+
+                if (fired)
+                {
+                    ruleManager.CurrentReloadRule.DeductAmmo();
+                }
             }
-            else
-            {
-                Debug.Log("Reload");
-            }
-            
         }
 
         // Fire held
@@ -125,7 +123,12 @@ public class Player : MonoBehaviour, IDamagable
         // Fire released
         if (inputActions.Player.Attack.WasReleasedThisFrame())
         {
-            shootCommand.ExecuteRelease();
+            bool fired = shootCommand.ExecuteRelease();
+
+            if (fired)
+            {
+                ruleManager.CurrentReloadRule.DeductAmmo();
+            }
         }
         
         HandleGravity();

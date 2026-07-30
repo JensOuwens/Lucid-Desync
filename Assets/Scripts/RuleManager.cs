@@ -63,7 +63,8 @@ public class RuleManager : MonoBehaviour
 
             boomerGunRule = new HitscanGunRule(enemyLayerMask, 25, 0.55f, playerGameObject);
             revolverGunRule = new HitscanGunRule(enemyLayerMask, 35, 1f, playerGameObject);
-            CurrentWeaponRule = boomerGunRule;
+            chargeShootRule = new ChargeGunRule(enemyLayerMask, 10, 100, 0.5f, 3f,playerGameObject);
+            CurrentWeaponRule = chargeShootRule;
         }
 
         public void ChangeRules(LoopData loopData)

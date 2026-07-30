@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ProjectileGunRule : IWeaponRule
 {
-    public void Press()
+    public bool Press()
     {
         throw new System.NotImplementedException();
     }
@@ -12,7 +12,7 @@ public class ProjectileGunRule : IWeaponRule
         throw new System.NotImplementedException();
     }
 
-    public void Release()
+    public bool Release()
     {
         throw new System.NotImplementedException();
     }
