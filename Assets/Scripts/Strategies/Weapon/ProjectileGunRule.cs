@@ -1,13 +1,28 @@
 using UnityEngine;
 
+/// <summary>
+/// TODO: add a firepoint where the bullet comes from later
+/// </summary>
 public class ProjectileGunRule : IWeaponRule
 {
+    private float damage;
     private float fireRate;
-    private GameObject playerGameObject;
-    
+    private Camera playerCamera;
     private GameObject bulletPrefab;
+    private LayerMask enemyLayerMask;
+    
+    private float projectileSpawnOffset = 1f;
     
     private float nextFireTime;
+
+    public ProjectileGunRule(float damage, float fireRate, Camera playerCamera, GameObject bulletPrefab, LayerMask enemyLayerMask)
+    {
+        this.damage = damage;
+        this.fireRate = fireRate;
+        this.playerCamera = playerCamera;
+        this.bulletPrefab = bulletPrefab;
+        this.enemyLayerMask = enemyLayerMask;
+    }
     public bool Press()
     {
         // Check cooldown first
@@ -17,26 +32,9 @@ public class ProjectileGunRule : IWeaponRule
         nextFireTime = Time.time + fireRate;
 
         //fire projectile
+        GameObject bullet = Object.Instantiate(bulletPrefab, playerCamera.transform.position + playerCamera.transform.forward * projectileSpawnOffset, playerCamera.transform.rotation);
         
-        
-        // Raycast
-        //if (!Physics.Raycast(
-            //      playerGameObject.transform.position,
-            //      playerGameObject.transform.forward,
-            //      out RaycastHit hitInfo,
-            //      100))
-            // return true;
-
-        // Check if hit is in layermask
-        // if (((1 << hitInfo.collider.gameObject.layer) & enemyLayerMask.value) == 0)
-        //     return true;
-        //
-        //
-        // // Damage
-        // if (hitInfo.collider.TryGetComponent<IDamagable>(out var damageable))
-        // {
-        //     damageable.Hurt(damage);
-        // }
+        bullet.GetComponent<ProjectileBullet>().Initialize(damage, enemyLayerMask);
         
         return true;
     }

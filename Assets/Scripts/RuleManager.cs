@@ -43,6 +43,9 @@ public class RuleManager : MonoBehaviour
 
         [Header("enemy")] 
         [SerializeField] private LayerMask enemyLayerMask;
+        
+        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField] private Camera  playerCamera;
 
         public void SetupStrategies(CharacterController controller, GameObject playerGameObject)
         {
@@ -64,7 +67,8 @@ public class RuleManager : MonoBehaviour
             boomerGunRule = new HitscanGunRule(enemyLayerMask, 25, 0.55f, playerGameObject);
             revolverGunRule = new HitscanGunRule(enemyLayerMask, 35, 1f, playerGameObject);
             chargeShootRule = new ChargeGunRule(enemyLayerMask, 10, 100, 0.5f, 3f,playerGameObject);
-            CurrentWeaponRule = chargeShootRule;
+            projectileShootRule = new ProjectileGunRule(40f, 0.25f, playerCamera, bulletPrefab, enemyLayerMask);
+            CurrentWeaponRule = projectileShootRule;
         }
 
         public void ChangeRules(LoopData loopData)
