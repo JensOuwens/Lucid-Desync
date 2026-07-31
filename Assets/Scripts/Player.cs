@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,6 +35,9 @@ public class Player : MonoBehaviour, IDamagable
     private Vector3 dashVelocity;
     private float dashTimer;
     private float dashCooldownTimer;
+    
+    //health
+    private Coroutine shieldRechargeCoroutine;
 
     [Header("Dash stuff")]
     [SerializeField] private float dashDuration = 0.2f;
@@ -98,6 +103,7 @@ public class Player : MonoBehaviour, IDamagable
         if (inputActions.Player.Reload.WasPressedThisFrame())
         {
             reloadCommand.Execute();
+            //Hurt(30);
         }
 
         // Fire pressed
@@ -112,6 +118,8 @@ public class Player : MonoBehaviour, IDamagable
                     ruleManager.CurrentReloadRule.DeductAmmo();
                 }
             }
+            
+            //Hurt(15);
         }
 
         // Fire held
@@ -195,7 +203,31 @@ public class Player : MonoBehaviour, IDamagable
 
     public void Hurt(float damage)
     {
-        ruleManager.CurrentHealthRule.Damage();
+        ruleManager.CurrentHealthRule.Damage(damage);
+
+        if (ruleManager.CurrentHealthRule is ShieldHealthRule shield)
+        {
+            if (shieldRechargeCoroutine != null)
+            {
+                StopCoroutine(shieldRechargeCoroutine);
+            }
+
+            shieldRechargeCoroutine = StartCoroutine(RechargeShield(shield));
+        }
+    }
+    
+    private IEnumerator RechargeShield(ShieldHealthRule shield)
+    {
+        yield return new WaitForSeconds(shield.RechargeCooldown);
+
+        while (shield.ReturnHealth() < shield.MaxHealth)
+        {
+            shield.Heal(shield.RechargeRate * Time.deltaTime);
+
+            yield return null;
+        }
+
+        shieldRechargeCoroutine = null;
     }
 
     public void Die()

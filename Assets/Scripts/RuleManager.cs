@@ -68,7 +68,11 @@ public class RuleManager : MonoBehaviour
             revolverGunRule = new HitscanGunRule(enemyLayerMask, 35, 1f, playerGameObject);
             chargeShootRule = new ChargeGunRule(enemyLayerMask, 10, 100, 0.5f, 3f,playerGameObject);
             projectileShootRule = new ProjectileGunRule(40f, 0.25f, playerCamera, bulletPrefab, enemyLayerMask);
-            CurrentWeaponRule = projectileShootRule;
+            CurrentWeaponRule = boomerGunRule;
+
+            normalHealthRule = new NormalHealthRule(100);
+            shieldHealthRule = new ShieldHealthRule(100, 10, 2.5f);
+            CurrentHealthRule = normalHealthRule;
         }
 
         public void ChangeRules(LoopData loopData)
