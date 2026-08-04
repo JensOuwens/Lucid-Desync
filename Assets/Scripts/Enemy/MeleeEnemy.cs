@@ -20,10 +20,12 @@ public class MeleeEnemy : BaseEnemy
     private float targetUpdateTimer;
 
     private Camera playerCamera;
+    private float baseMoveSpeed;
 
     private void Start()
     {
         playerCamera = Camera.main;
+        baseMoveSpeed = navMeshAgent.speed;
     }
 
     private void Update()
@@ -34,26 +36,27 @@ public class MeleeEnemy : BaseEnemy
         attackTimer -= Time.deltaTime;
         targetUpdateTimer -= Time.deltaTime;
 
+        navMeshAgent.speed =
+            baseMoveSpeed * GetSpeedMultiplier();
+
         float distanceToPlayer = Vector3.Distance(
             transform.position,
             player.transform.position
         );
 
-        // Close enough to attack.
         if (distanceToPlayer <= attackRange)
         {
             Attack();
             return;
         }
 
-        // Close enough to charge OR player can see us.
-        if (distanceToPlayer <= chargeDistance || IsVisibleToPlayer())
+        if (distanceToPlayer <= chargeDistance ||
+            IsVisibleToPlayer())
         {
             ChargePlayer();
             return;
         }
 
-        // Otherwise, stay behind the player's camera.
         if (targetUpdateTimer <= 0f)
         {
             MoveBehindPlayer();
@@ -65,14 +68,13 @@ public class MeleeEnemy : BaseEnemy
     {
         Vector3 playerPosition = player.transform.position;
 
-        // We want to be BEHIND where the player is looking.
         Vector3 targetPosition =
-            playerPosition - playerCamera.transform.forward * behindPlayerDistance;
+            playerPosition -
+            playerCamera.transform.forward *
+            behindPlayerDistance;
 
-        // Don't include camera pitch.
         targetPosition.y = playerPosition.y;
 
-        // Make sure the position is actually on the NavMesh.
         if (NavMesh.SamplePosition(
             targetPosition,
             out NavMeshHit hit,
@@ -98,7 +100,6 @@ public class MeleeEnemy : BaseEnemy
         Vector3 viewportPosition =
             playerCamera.WorldToViewportPoint(enemyPosition);
 
-        // Enemy isn't even inside the camera's view.
         if (viewportPosition.z <= 0)
             return false;
 
@@ -110,8 +111,8 @@ public class MeleeEnemy : BaseEnemy
             return false;
         }
 
-        // Check whether something is blocking the camera's view.
-        Vector3 cameraPosition = playerCamera.transform.position;
+        Vector3 cameraPosition =
+            playerCamera.transform.position;
 
         Vector3 direction =
             enemyPosition - cameraPosition;
@@ -124,7 +125,6 @@ public class MeleeEnemy : BaseEnemy
             out RaycastHit hit,
             distance))
         {
-            // The first thing the camera hits is the enemy.
             return hit.transform == transform ||
                    hit.transform.IsChildOf(transform);
         }
@@ -137,11 +137,12 @@ public class MeleeEnemy : BaseEnemy
         navMeshAgent.isStopped = true;
 
         Vector3 direction =
-            player.transform.position - transform.position;
+            player.transform.position -
+            transform.position;
 
         direction.y = 0f;
 
-        if (direction != Vector3.zero)
+        if (direction.sqrMagnitude > 0.01f)
         {
             transform.rotation =
                 Quaternion.LookRotation(direction);
@@ -149,13 +150,20 @@ public class MeleeEnemy : BaseEnemy
 
         if (attackTimer <= 0f)
         {
+            float finalDamage =
+                attackDamage * GetDamageMultiplier();
+
             Debug.Log(
                 gameObject.name +
                 " attacks player for " +
-                attackDamage
+                finalDamage
             );
 
-            player.GetComponent<IDamagable>().Hurt(attackDamage);
+            if (player.TryGetComponent<IDamagable>(
+                out var damageable))
+            {
+                damageable.Hurt(finalDamage);
+            }
 
             attackTimer = attackCooldown;
         }

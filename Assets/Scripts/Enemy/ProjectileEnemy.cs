@@ -23,7 +23,6 @@ public class ProjectileEnemy : BaseEnemy
 
     [Header("Vision")]
     [SerializeField] private float visionHeight = 1.2f;
-    
     [SerializeField] private float projectileAimHeight = 0.6f;
 
     private State currentState;
@@ -31,12 +30,11 @@ public class ProjectileEnemy : BaseEnemy
     private float attackTimer;
     private float repositionTimer;
 
-    private Camera playerCamera;
+    private float baseMoveSpeed;
 
     private void Start()
     {
-        playerCamera = Camera.main;
-
+        baseMoveSpeed = navMeshAgent.speed;
         currentState = State.Moving;
     }
 
@@ -46,6 +44,9 @@ public class ProjectileEnemy : BaseEnemy
             return;
 
         attackTimer -= Time.deltaTime;
+
+        navMeshAgent.speed =
+            baseMoveSpeed * GetSpeedMultiplier();
 
         switch (currentState)
         {
@@ -72,14 +73,15 @@ public class ProjectileEnemy : BaseEnemy
             player.transform.position
         );
 
-        // Too far away? Keep approaching.
         if (distance > attackRange)
         {
-            navMeshAgent.SetDestination(player.transform.position);
+            navMeshAgent.SetDestination(
+                player.transform.position
+            );
+
             return;
         }
 
-        // Close enough and can see player.
         if (HasLineOfSight())
         {
             navMeshAgent.isStopped = true;
@@ -87,8 +89,9 @@ public class ProjectileEnemy : BaseEnemy
             return;
         }
 
-        // Can't see player yet.
-        navMeshAgent.SetDestination(player.transform.position);
+        navMeshAgent.SetDestination(
+            player.transform.position
+        );
     }
 
     private void UpdateAttacking()
@@ -97,7 +100,6 @@ public class ProjectileEnemy : BaseEnemy
 
         FacePlayer();
 
-        // Player moved behind something.
         if (!HasLineOfSight())
         {
             currentState = State.Moving;
@@ -110,7 +112,6 @@ public class ProjectileEnemy : BaseEnemy
 
             attackTimer = attackCooldown;
 
-            // Immediately reposition after shooting.
             StartRepositioning();
         }
     }
@@ -118,7 +119,8 @@ public class ProjectileEnemy : BaseEnemy
     private void StartRepositioning()
     {
         Vector3 directionFromPlayer =
-            transform.position - player.transform.position;
+            transform.position -
+            player.transform.position;
 
         directionFromPlayer.y = 0f;
 
@@ -129,12 +131,11 @@ public class ProjectileEnemy : BaseEnemy
 
         directionFromPlayer.Normalize();
 
-        // Pick a random direction perpendicular to our current
-        // position relative to the player.
-        Vector3 repositionDirection = Vector3.Cross(
-            Vector3.up,
-            directionFromPlayer
-        );
+        Vector3 repositionDirection =
+            Vector3.Cross(
+                Vector3.up,
+                directionFromPlayer
+            );
 
         if (Random.value > 0.5f)
         {
@@ -143,7 +144,8 @@ public class ProjectileEnemy : BaseEnemy
 
         Vector3 targetPosition =
             transform.position +
-            repositionDirection * repositionDistance;
+            repositionDirection *
+            repositionDistance;
 
         if (NavMesh.SamplePosition(
             targetPosition,
@@ -159,8 +161,6 @@ public class ProjectileEnemy : BaseEnemy
         }
         else
         {
-            // Couldn't find a valid position.
-            // Try attacking again instead.
             currentState = State.Attacking;
         }
     }
@@ -197,31 +197,37 @@ public class ProjectileEnemy : BaseEnemy
             Vector3.up * projectileAimHeight;
 
         Vector3 direction =
-            target - projectileSpawnPoint.position;
+            target -
+            projectileSpawnPoint.position;
 
         projectile.transform.SetPositionAndRotation(
             projectileSpawnPoint.position,
             Quaternion.LookRotation(direction)
         );
 
-        projectile.Initialize(damage);
+        float finalDamage =
+            damage * GetDamageMultiplier();
+
+        projectile.Initialize(finalDamage);
     }
 
     private bool HasLineOfSight()
     {
         Vector3 origin =
-            transform.position + Vector3.up * visionHeight;
+            transform.position +
+            Vector3.up * visionHeight;
 
         Vector3 target =
-            player.transform.position + Vector3.up * visionHeight;
+            player.transform.position +
+            Vector3.up * visionHeight;
 
         Vector3 direction = target - origin;
 
         if (Physics.Raycast(
-                origin,
-                direction.normalized,
-                out RaycastHit hit,
-                direction.magnitude))
+            origin,
+            direction.normalized,
+            out RaycastHit hit,
+            direction.magnitude))
         {
             return hit.transform == player.transform ||
                    hit.transform.IsChildOf(player.transform);
@@ -233,13 +239,15 @@ public class ProjectileEnemy : BaseEnemy
     private void FacePlayer()
     {
         Vector3 direction =
-            player.transform.position - transform.position;
+            player.transform.position -
+            transform.position;
 
         direction.y = 0f;
 
         if (direction.sqrMagnitude > 0.01f)
         {
-            transform.rotation = Quaternion.LookRotation(direction);
+            transform.rotation =
+                Quaternion.LookRotation(direction);
         }
     }
 }
