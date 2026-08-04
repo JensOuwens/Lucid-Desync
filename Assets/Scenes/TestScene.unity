@@ -1153,6 +1153,7 @@ MonoBehaviour:
     m_Bits: 8
   bulletPrefab: {fileID: 3614999019790492833, guid: 3d8c1e0f8ba526e49a924ea2edc0cae4, type: 3}
   playerCamera: {fileID: 83626778}
+  player: {fileID: 297605975}
 --- !u!4 &1366308576
 Transform:
   m_ObjectHideFlags: 0

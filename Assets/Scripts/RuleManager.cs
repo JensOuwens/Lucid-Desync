@@ -34,8 +34,8 @@ public class RuleManager : MonoBehaviour
     //Health Rules
         private IHealthRule normalHealthRule;
         private IHealthRule shieldHealthRule;
-        private IHealthRule maskHealthRule;
-        private IHealthRule timerHealthRule;
+        private IHealthRule segmentHealthRule;
+        private IHealthRule rallyHealthRule;
         
     //Gravity Rules
         private IGravityRule normalGravityRule;
@@ -46,6 +46,8 @@ public class RuleManager : MonoBehaviour
         
         [SerializeField] private GameObject bulletPrefab;
         [SerializeField] private Camera  playerCamera;
+
+        [SerializeField] private Player player;
 
         public void SetupStrategies(CharacterController controller, GameObject playerGameObject)
         {
@@ -64,16 +66,17 @@ public class RuleManager : MonoBehaviour
             noReloadRule = new NoReloadRule();
             CurrentReloadRule = noReloadRule;
 
-            boomerGunRule = new HitscanGunRule(enemyLayerMask, 25, 0.55f, playerGameObject);
-            revolverGunRule = new HitscanGunRule(enemyLayerMask, 35, 1f, playerGameObject);
+            boomerGunRule = new HitscanGunRule(enemyLayerMask, 25, 0.55f, 25f, playerGameObject);
+            revolverGunRule = new HitscanGunRule(enemyLayerMask, 35, 1f, 35f, playerGameObject);
             chargeShootRule = new ChargeGunRule(enemyLayerMask, 10, 100, 0.5f, 3f,playerGameObject);
-            projectileShootRule = new ProjectileGunRule(40f, 0.25f, playerCamera, bulletPrefab, enemyLayerMask);
+            projectileShootRule = new ProjectileGunRule(40f, 0.25f, playerCamera, bulletPrefab, enemyLayerMask, player,30f);
             CurrentWeaponRule = boomerGunRule;
 
             normalHealthRule = new NormalHealthRule(100);
             shieldHealthRule = new ShieldHealthRule(100, 10, 2.5f);
-            maskHealthRule = new SegmentHealthRule(8);
-            CurrentHealthRule = maskHealthRule;
+            segmentHealthRule = new SegmentHealthRule(8);
+            rallyHealthRule = new PostDamageHealthRule(100, 0.75f);
+            CurrentHealthRule = rallyHealthRule;
         }
 
         public void ChangeRules(LoopData loopData)
@@ -88,10 +91,10 @@ public class RuleManager : MonoBehaviour
                     CurrentHealthRule = shieldHealthRule;
                     break;
                 case EHealtRule.masks :
-                    CurrentHealthRule =  maskHealthRule;
+                    CurrentHealthRule =  segmentHealthRule;
                     break;
                 case EHealtRule.timer :
-                    CurrentHealthRule  = timerHealthRule;
+                    CurrentHealthRule  = rallyHealthRule;
                     break;
             }
 

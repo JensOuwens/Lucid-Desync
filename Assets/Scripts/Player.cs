@@ -200,6 +200,11 @@ public class Player : MonoBehaviour, IDamagable
             groundMask
         );
     }
+    
+    public IHealthRule GetHealthRule()
+    {
+        return ruleManager.CurrentHealthRule;
+    }
 
     public void Hurt(float damage)
     {
