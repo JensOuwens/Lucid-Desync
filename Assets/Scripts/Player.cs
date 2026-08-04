@@ -103,7 +103,7 @@ public class Player : MonoBehaviour, IDamagable
         if (inputActions.Player.Reload.WasPressedThisFrame())
         {
             reloadCommand.Execute();
-            //Hurt(30);
+            Hurt(-30);
         }
 
         // Fire pressed
@@ -119,7 +119,7 @@ public class Player : MonoBehaviour, IDamagable
                 }
             }
             
-            //Hurt(15);
+            Hurt(15);
         }
 
         // Fire held

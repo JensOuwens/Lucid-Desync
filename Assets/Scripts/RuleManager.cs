@@ -72,7 +72,8 @@ public class RuleManager : MonoBehaviour
 
             normalHealthRule = new NormalHealthRule(100);
             shieldHealthRule = new ShieldHealthRule(100, 10, 2.5f);
-            CurrentHealthRule = normalHealthRule;
+            maskHealthRule = new SegmentHealthRule(8);
+            CurrentHealthRule = maskHealthRule;
         }
 
         public void ChangeRules(LoopData loopData)
