@@ -49,7 +49,7 @@ public class RuleManager : MonoBehaviour
 
         [SerializeField] private Player player;
 
-        public void SetupStrategies(CharacterController controller, GameObject playerGameObject)
+        public void SetupStrategies(GameObject playerGameObject)
         {
             //create the rule constructors here
             boomerMoveRule = new BoomerMovementStrategy(12f, playerGameObject);

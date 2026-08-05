@@ -16,3 +16,9 @@ public struct EnemyWaveData
     public int amountOfEnemies;
     public int enemyMaxInLevel;
 }
+
+[Serializable]
+public struct WaveData
+{
+    public EnemyWaveData[] enemies;
+}

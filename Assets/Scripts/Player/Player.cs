@@ -55,7 +55,7 @@ public class Player : MonoBehaviour, IDamagable
 
         playerCharacterController = this.gameObject.GetComponent<CharacterController>();
             
-        ruleManager.SetupStrategies(playerCharacterController, this.gameObject);
+        ruleManager.SetupStrategies(this.gameObject);
     }
 
     private void OnEnable()

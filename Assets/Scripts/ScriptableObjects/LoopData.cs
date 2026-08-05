@@ -9,7 +9,7 @@ public class LoopData : ScriptableObject
 {
     public int loopNumber;
     public int enemyCount;
-    public EnemyWaveData[] enemyData;
+    public WaveData[] enemyData;
     public EHealtRule currentHealthRule;
     public EGunRule currentGunRule;
     public EMovementRule currentMovementRule;

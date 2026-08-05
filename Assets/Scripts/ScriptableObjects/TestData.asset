@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoopData
   loopNumber: 0
   enemyCount: 4
+  enemyData: []
   currentHealthRule: 0
   currentGunRule: 0
   currentMovementRule: 0
+  currentGravityType: 0
   currentUIType: 0
   currentMusicType: 0
