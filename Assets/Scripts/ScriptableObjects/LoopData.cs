@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// ToDO: Add enemy wave
+/// ToDO: Maybe add more variables?
 /// </summary>
 
 [CreateAssetMenu(fileName = "LoopData", menuName = "ScriptableObjects/LoopData", order = 1)]
@@ -9,7 +9,7 @@ public class LoopData : ScriptableObject
 {
     public int loopNumber;
     public int enemyCount;
-    //enemy type
+    public EnemyWaveData[] enemyData;
     public EHealtRule currentHealthRule;
     public EGunRule currentGunRule;
     public EMovementRule currentMovementRule;

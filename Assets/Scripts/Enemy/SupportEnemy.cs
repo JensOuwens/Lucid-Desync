@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 public class SupportEnemy : BaseEnemy
 {
@@ -7,6 +8,7 @@ public class SupportEnemy : BaseEnemy
     {
         Searching,
         Casting,
+        Reacting,
         Fleeing
     }
 
@@ -18,15 +20,18 @@ public class SupportEnemy : BaseEnemy
     [SerializeField] private float speedBuff = 1.5f;
     [SerializeField] private float damageBuff = 1.5f;
 
+    [Header("Casting")]
     [SerializeField] private float castTime = 2f;
     [SerializeField] private float castCooldown = 3f;
 
     [Header("Fleeing")]
-    [SerializeField] private float fleeDistance = 10f;
+    [SerializeField] private float fleeDistance = 15f;
     [SerializeField] private float fleeSpeed = 5f;
 
-    [SerializeField] private float reactionTime = 0.75f;
-    [SerializeField] private float visionHeight = 1.2f;
+    [SerializeField] private int fleeSamples = 20;
+
+    [Header("Vision")]
+    [SerializeField] private float visionHeight = 0.25f;
 
     [Header("Searching")]
     [SerializeField] private float searchInterval = 0.5f;
@@ -38,9 +43,15 @@ public class SupportEnemy : BaseEnemy
 
     private Camera playerCamera;
 
+    private float baseMoveSpeed;
+
+    private bool playerSpottedDuringCast;
+
     private void Start()
     {
         playerCamera = Camera.main;
+
+        baseMoveSpeed = navMeshAgent.speed;
 
         currentState = State.Searching;
     }
@@ -60,6 +71,10 @@ public class SupportEnemy : BaseEnemy
                 UpdateCasting();
                 break;
 
+            case State.Reacting:
+                UpdateReacting();
+                break;
+
             case State.Fleeing:
                 UpdateFleeing();
                 break;
@@ -69,6 +84,8 @@ public class SupportEnemy : BaseEnemy
     private void UpdateSearching()
     {
         navMeshAgent.isStopped = false;
+        navMeshAgent.speed =
+            baseMoveSpeed * GetSpeedMultiplier();
 
         searchTimer -= Time.deltaTime;
 
@@ -77,12 +94,14 @@ public class SupportEnemy : BaseEnemy
 
         searchTimer = searchInterval;
 
-        if (PlayerCanSeeMe())
+        // Player spotted us.
+        if (CanSeePlayer())
         {
-            StartFleeing();
+            StartReacting();
             return;
         }
 
+        // Look for enemies to buff.
         if (FindBuffTargets().Count > 0)
         {
             StartCasting();
@@ -94,6 +113,7 @@ public class SupportEnemy : BaseEnemy
         currentState = State.Casting;
 
         stateTimer = castTime;
+        playerSpottedDuringCast = false;
 
         navMeshAgent.isStopped = true;
 
@@ -106,44 +126,68 @@ public class SupportEnemy : BaseEnemy
 
         stateTimer -= Time.deltaTime;
 
-        /*
-         * IMPORTANT:
-         *
-         * We do NOT immediately stop casting when the player
-         * sees us.
-         *
-         * The support has a reaction delay.
-         */
+        // Remember that the player saw us.
+        if (CanSeePlayer())
+        {
+            playerSpottedDuringCast = true;
+        }
 
+        // Finish casting.
         if (stateTimer <= 0f)
         {
             CastBuff();
 
-            stateTimer = castCooldown;
-
-            if (PlayerCanSeeMe())
+            // We were spotted during the cast.
+            if (playerSpottedDuringCast || CanSeePlayer())
             {
-                // Player caught us immediately after casting.
-                StartFleeing();
+                StartReacting();
             }
             else
             {
+                stateTimer = castCooldown;
                 currentState = State.Searching;
             }
-
-            return;
         }
+    }
 
-        // Player sees us while we're casting.
-        if (PlayerCanSeeMe())
+    private void StartReacting()
+    {
+        /*
+         * IMPORTANT:
+         * We leave Casting immediately.
+         *
+         * This means the support cannot finish another buff
+         * once it has decided to flee.
+         */
+        currentState = State.Reacting;
+
+        stateTimer = 0.75f;
+
+        navMeshAgent.isStopped = true;
+
+        FacePlayer();
+    }
+
+    private void UpdateReacting()
+    {
+        navMeshAgent.isStopped = true;
+
+        FacePlayer();
+
+        stateTimer -= Time.deltaTime;
+
+        if (stateTimer <= 0f)
         {
-            // We continue casting.
-            // The player gets a short window to interrupt us.
+            StartFleeing();
         }
     }
 
     private void CastBuff()
     {
+        // Never cast while fleeing.
+        if (currentState == State.Fleeing)
+            return;
+
         var targets = FindBuffTargets();
 
         foreach (BaseEnemy enemy in targets)
@@ -160,15 +204,15 @@ public class SupportEnemy : BaseEnemy
         );
     }
 
-    private System.Collections.Generic.List<BaseEnemy> FindBuffTargets()
+    private List<BaseEnemy> FindBuffTargets()
     {
         Collider[] colliders = Physics.OverlapSphere(
             transform.position,
             buffRange
         );
 
-        System.Collections.Generic.List<BaseEnemy> targets =
-            new System.Collections.Generic.List<BaseEnemy>();
+        List<BaseEnemy> targets =
+            new List<BaseEnemy>();
 
         foreach (Collider collider in colliders)
         {
@@ -197,133 +241,134 @@ public class SupportEnemy : BaseEnemy
 
     private void StartFleeing()
     {
+        /*
+         * Immediately stop whatever the support was doing.
+         * In particular, it cannot continue casting.
+         */
         currentState = State.Fleeing;
 
         navMeshAgent.isStopped = false;
         navMeshAgent.speed = fleeSpeed;
 
-        Vector3 directionAwayFromPlayer =
-            transform.position - player.transform.position;
-
-        directionAwayFromPlayer.y = 0f;
-
-        if (directionAwayFromPlayer.sqrMagnitude < 0.01f)
-        {
-            directionAwayFromPlayer = transform.forward;
-        }
-
-        directionAwayFromPlayer.Normalize();
-
-        Vector3 fleeTarget =
-            transform.position +
-            directionAwayFromPlayer * fleeDistance;
-
-        if (NavMesh.SamplePosition(
-            fleeTarget,
-            out NavMeshHit hit,
-            fleeDistance,
-            NavMesh.AllAreas))
-        {
-            navMeshAgent.SetDestination(hit.position);
-        }
-        else
-        {
-            // If there isn't a valid point directly behind us,
-            // pick a random nearby NavMesh point.
-            FindRandomFleePosition();
-        }
-
-        stateTimer = reactionTime;
+        SetFurthestFleeDestination();
     }
 
     private void UpdateFleeing()
     {
         navMeshAgent.isStopped = false;
-
         navMeshAgent.speed = fleeSpeed;
 
-        // Keep running if the player is still nearby.
-        if (PlayerCanSeeMe())
+        /*
+         * If the player can still see us, find another position
+         * that gets us as far away from them as possible.
+         */
+        if (CanSeePlayer())
         {
-            Vector3 directionAwayFromPlayer =
-                transform.position - player.transform.position;
-
-            directionAwayFromPlayer.y = 0f;
-
-            if (directionAwayFromPlayer.sqrMagnitude > 0.01f)
-            {
-                directionAwayFromPlayer.Normalize();
-
-                Vector3 target =
-                    transform.position +
-                    directionAwayFromPlayer * fleeDistance;
-
-                if (NavMesh.SamplePosition(
-                    target,
-                    out NavMeshHit hit,
-                    fleeDistance,
-                    NavMesh.AllAreas))
-                {
-                    navMeshAgent.SetDestination(hit.position);
-                }
-            }
-
-            return;
+            SetFurthestFleeDestination();
         }
-
-        stateTimer -= Time.deltaTime;
-
-        if (stateTimer <= 0f)
+        else
         {
-            navMeshAgent.speed = 3.5f;
+            /*
+             * Once we've broken line of sight, stop fleeing.
+             * We can resume supporting from our new position.
+             */
+            navMeshAgent.speed =
+                baseMoveSpeed * GetSpeedMultiplier();
+
+            searchTimer = searchInterval;
+
             currentState = State.Searching;
         }
     }
 
-    private bool PlayerCanSeeMe()
+    private void SetFurthestFleeDestination()
     {
-        if (playerCamera == null)
-            return false;
+        Vector3 bestPosition = transform.position;
 
-        Vector3 enemyPosition =
-            transform.position + Vector3.up * visionHeight;
+        float bestDistance = 
+            Vector3.Distance(
+                transform.position,
+                player.transform.position
+            );
 
-        Vector3 viewportPosition =
-            playerCamera.WorldToViewportPoint(enemyPosition);
-
-        // Enemy isn't inside the camera's view.
-        if (viewportPosition.z <= 0f)
-            return false;
-
-        if (viewportPosition.x < 0f ||
-            viewportPosition.x > 1f ||
-            viewportPosition.y < 0f ||
-            viewportPosition.y > 1f)
+        /*
+         * Sample positions in a circle around us.
+         *
+         * We choose the position that puts the support
+         * furthest away from the player.
+         */
+        for (int i = 0; i < fleeSamples; i++)
         {
-            return false;
+            Vector3 randomDirection =
+                Random.insideUnitSphere * fleeDistance;
+
+            randomDirection.y = 0f;
+
+            if (randomDirection.sqrMagnitude < 0.01f)
+                continue;
+
+            Vector3 candidate =
+                transform.position + randomDirection;
+
+            if (!NavMesh.SamplePosition(
+                candidate,
+                out NavMeshHit hit,
+                fleeDistance,
+                NavMesh.AllAreas))
+            {
+                continue;
+            }
+
+            float distanceFromPlayer =
+                Vector3.Distance(
+                    hit.position,
+                    player.transform.position
+                );
+
+            if (distanceFromPlayer > bestDistance)
+            {
+                bestDistance = distanceFromPlayer;
+                bestPosition = hit.position;
+            }
         }
 
-        // Check if something is blocking the player's view.
-        Vector3 cameraPosition =
-            playerCamera.transform.position;
+        if (bestPosition != transform.position)
+        {
+            navMeshAgent.SetDestination(bestPosition);
+        }
+    }
+    
+    private bool CanSeePlayer()
+    {
+        if (player == null)
+            return false;
+
+        Vector3 origin =
+            transform.position +
+            Vector3.up * visionHeight;
+
+        Vector3 target =
+            player.transform.position +
+            Vector3.up * visionHeight;
 
         Vector3 direction =
-            enemyPosition - cameraPosition;
+            target - origin;
 
         float distance = direction.magnitude;
 
         if (Physics.Raycast(
-            cameraPosition,
-            direction.normalized,
-            out RaycastHit hit,
-            distance))
+                origin,
+                direction.normalized,
+                out RaycastHit hit,
+                distance))
         {
-            return hit.transform == transform ||
-                   hit.transform.IsChildOf(transform);
+            return hit.transform == player.transform ||
+                   hit.transform.IsChildOf(player.transform);
         }
 
         return false;
     }
+
 
     private void FaceNearestTarget()
     {
@@ -345,27 +390,18 @@ public class SupportEnemy : BaseEnemy
         }
     }
 
-    private void FindRandomFleePosition()
+    private void FacePlayer()
     {
-        for (int i = 0; i < 5; i++)
+        Vector3 direction =
+            player.transform.position -
+            transform.position;
+
+        direction.y = 0f;
+
+        if (direction.sqrMagnitude > 0.01f)
         {
-            Vector3 randomDirection =
-                Random.insideUnitSphere * fleeDistance;
-
-            randomDirection.y = 0f;
-
-            Vector3 target =
-                transform.position + randomDirection;
-
-            if (NavMesh.SamplePosition(
-                target,
-                out NavMeshHit hit,
-                fleeDistance,
-                NavMesh.AllAreas))
-            {
-                navMeshAgent.SetDestination(hit.position);
-                return;
-            }
+            transform.rotation =
+                Quaternion.LookRotation(direction);
         }
     }
 
@@ -374,6 +410,11 @@ public class SupportEnemy : BaseEnemy
         Gizmos.DrawWireSphere(
             transform.position,
             buffRange
+        );
+
+        Gizmos.DrawWireSphere(
+            transform.position,
+            fleeDistance
         );
     }
 }
