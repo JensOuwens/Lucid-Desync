@@ -69,7 +69,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 582c02aa946375141b8c65b255e9396e, type: 2}
+  - {fileID: 2100000, guid: d7d7cb4fcc3d9a34ebdec1b8ad4b46c5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b7c745ae448aba4a937367adce11ec4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SupportEnemy
-  maxHealth: 100
+  maxHealth: 30
   player: {fileID: 0}
   navMeshAgent: {fileID: 3078610496635054225}
   buffRange: 30

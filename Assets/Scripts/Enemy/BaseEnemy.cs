@@ -14,6 +14,11 @@ public class BaseEnemy : MonoBehaviour, IDamagable
     protected virtual void Awake()
     {
         currentHealth = maxHealth;
+        
+        if (player == null)
+        {
+            player = GameObject.FindGameObjectWithTag("Player");
+        }
     }
     
     public void Hurt(float damage)
@@ -31,6 +36,8 @@ public class BaseEnemy : MonoBehaviour, IDamagable
     public void Die()
     {
         Debug.Log(this.gameObject.name + " has died");
+        EnemyManager.Instance.EnemyDied();
+
         Destroy(gameObject);
     }
     

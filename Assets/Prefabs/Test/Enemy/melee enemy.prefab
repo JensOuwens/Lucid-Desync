@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e23822b211f40064ea45151dcfa33fc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MeleeEnemy
-  maxHealth: 100
+  maxHealth: 75
   player: {fileID: 0}
   navMeshAgent: {fileID: 304374642868789854}
   attackRange: 1.5

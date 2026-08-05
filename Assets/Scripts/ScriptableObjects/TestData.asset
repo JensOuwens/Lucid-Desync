@@ -14,7 +14,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LoopData
   loopNumber: 0
   enemyCount: 4
-  enemyData: []
+  enemyData:
+  - enemies:
+    - enemiesInGroup:
+      - enemyType: 0
+        amountOfEnemies: 1
+      - enemyType: 1
+        amountOfEnemies: 2
+    - enemiesInGroup:
+      - enemyType: 2
+        amountOfEnemies: 1
+      - enemyType: 3
+        amountOfEnemies: 3
+    maxAliveEnemies: 4
+  - enemies:
+    - enemiesInGroup:
+      - enemyType: 0
+        amountOfEnemies: 12
+      - enemyType: 1
+        amountOfEnemies: 12
+    - enemiesInGroup:
+      - enemyType: 2
+        amountOfEnemies: 12
+      - enemyType: 3
+        amountOfEnemies: 12
+    maxAliveEnemies: 12
   currentHealthRule: 0
   currentGunRule: 0
   currentMovementRule: 0

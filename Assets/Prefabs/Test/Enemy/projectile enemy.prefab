@@ -70,7 +70,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 582c02aa946375141b8c65b255e9396e, type: 2}
+  - {fileID: 2100000, guid: 3e5cd75419c448b4ab83fb7d7e2570c7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd6443c07d245534ca8d702ffb34af28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileEnemy
-  maxHealth: 100
+  maxHealth: 50
   player: {fileID: 0}
   navMeshAgent: {fileID: 7714349336194751163}
   projectileSpawnPoint: {fileID: 7082729663349694724}
