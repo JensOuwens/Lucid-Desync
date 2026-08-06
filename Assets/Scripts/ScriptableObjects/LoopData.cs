@@ -16,5 +16,6 @@ public class LoopData : ScriptableObject
     public EGravityType currentGravityType;
     public EUIType currentUIType;
     public EMusicType currentMusicType;
+    public string TransitionMessage;
 
 }

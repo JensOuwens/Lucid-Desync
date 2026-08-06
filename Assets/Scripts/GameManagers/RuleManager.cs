@@ -2,12 +2,13 @@ using System.Diagnostics;
 using UnityEngine;
 
 /// <summary>
-/// TODO: Assign all rules once the rules have been made
 /// TODO: change variables of strategies
 /// TODO: make variables serializable
 /// </summary>
 public class RuleManager : MonoBehaviour
 {
+    public static RuleManager Instance { get; private set; }
+    
     //current commands
         public IHealthRule CurrentHealthRule;
         public IMovementRule CurrentMovementRule;
@@ -48,6 +49,17 @@ public class RuleManager : MonoBehaviour
         [SerializeField] private Camera  playerCamera;
 
         [SerializeField] private Player player;
+        
+        private void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+        }
 
         public void SetupStrategies(GameObject playerGameObject)
         {
@@ -56,27 +68,22 @@ public class RuleManager : MonoBehaviour
             moonMoveRule = new MoonMovementStrategy(7f, playerGameObject, 5f);
             fastMoveRule = new FastMovementStrategy(20f, playerGameObject, 5f, 50f);
             physicsMoveRule = new PhysicsMovementStrategy(playerGameObject, 20f, 12f, 2f);
-            CurrentMovementRule = boomerMoveRule;
 
             normalGravityRule = new NormalGravityRule();
             moonGravityRule = new MoonGravityRule();
-            CurrentGravityRule = normalGravityRule;
 
             revolverReloadRule = new RevolverReload(6, 1.5f);
             noReloadRule = new NoReloadRule();
-            CurrentReloadRule = noReloadRule;
 
             boomerGunRule = new HitscanGunRule(enemyLayerMask, 25, 0.55f, 25f, playerGameObject);
             revolverGunRule = new HitscanGunRule(enemyLayerMask, 35, 1f, 35f, playerGameObject);
             chargeShootRule = new ChargeGunRule(enemyLayerMask, 10, 100, 0.5f, 3f,playerGameObject);
             projectileShootRule = new ProjectileGunRule(40f, 0.25f, playerCamera, bulletPrefab, enemyLayerMask, player,30f);
-            CurrentWeaponRule = boomerGunRule;
 
             normalHealthRule = new NormalHealthRule(100);
             shieldHealthRule = new ShieldHealthRule(100, 10, 2.5f);
             segmentHealthRule = new SegmentHealthRule(8);
             rallyHealthRule = new PostDamageHealthRule(100, 0.75f);
-            CurrentHealthRule = normalHealthRule;
         }
 
         public void ChangeRules(LoopData loopData)

@@ -20,10 +20,7 @@ public class EnemyManager : MonoBehaviour
     [SerializeField] private float minSpawnDistance = 10f;
     [SerializeField] private float spawnInterval = 0.75f;
     [SerializeField] private float spawnPointCooldown = 3f;
-
-    [Header("Testing")]
-    [SerializeField] private LoopData testData;
-
+    
     private int enemiesAlive;
     private int currentWaveIndex;
 
@@ -52,8 +49,6 @@ public class EnemyManager : MonoBehaviour
         }
 
         Instance = this;
-
-        StartLoop(testData);
     }
 
 
@@ -79,6 +74,8 @@ public class EnemyManager : MonoBehaviour
         }
 
         Debug.Log("Loop complete.");
+        
+        LoopManager.Instance.AllEnemiesDead();
     }
 
 
@@ -352,5 +349,28 @@ public class EnemyManager : MonoBehaviour
             enemiesAlive - 1,
             0
         );
+    }
+    
+    public void ResetEncounter()
+    {
+        if (spawnRoutine != null)
+        {
+            StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+        }
+
+        activeGroups.Clear();
+
+        enemiesAlive = 0;
+        currentWaveIndex = 0;
+
+        BaseEnemy[] enemies = FindObjectsByType<BaseEnemy>(
+            FindObjectsSortMode.None
+        );
+
+        foreach (BaseEnemy enemy in enemies)
+        {
+            Destroy(enemy.gameObject);
+        }
     }
 }
